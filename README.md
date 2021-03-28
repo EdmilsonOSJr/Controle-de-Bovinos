@@ -1,7 +1,7 @@
 # Controle-de-Bovinos
 Atividade proposta na oportunidade de estágio da empresa RERUN.
 
-# Para Usar o programa siga os seguintes passos:
+# Para usar o programa siga os seguintes passos:
 
 
 - Faça o download do programa.
