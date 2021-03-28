@@ -1,9 +1,11 @@
-package controleDeBovinos.view;
+package controleBovinos.view;
 
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.ParseException;
@@ -30,15 +32,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.MaskFormatter;
 
-import controleBovinos.Bean.BovinoBean;
+import org.postgresql.util.PSQLException;
+
 import controleBovinos.DAO.DAO;
 import controleBovinos.contantes.Constantes;
 import controleBovinos.entradaESaida.EntradaESaida;
-import controleDeBovinos.model.Bovino;
-import controleDeBovinos.model.BovinoTableModel;
-
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import controleBovinos.exception.BovinoInvalidoException;
+import controleBovinos.model.Bovino;
+import controleBovinos.model.BovinoTableModel;
+import controleBovinos.util.Util;
 
 public class CadastroBonvino extends JFrame {
 	
@@ -100,7 +102,7 @@ public class CadastroBonvino extends JFrame {
 		setResizable(false);
 		setAutoRequestFocus(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 766, 500);
+		setBounds(100, 100, 892, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -109,7 +111,7 @@ public class CadastroBonvino extends JFrame {
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setName("");
 		tabbedPane.setToolTipText("");
-		tabbedPane.setBounds(10, 11, 720, 439);
+		tabbedPane.setBounds(10, 11, 856, 439);
 		contentPane.add(tabbedPane);
 		
 		cadastroPanel = new JPanel();
@@ -118,7 +120,7 @@ public class CadastroBonvino extends JFrame {
 		cadastroPanel.setLayout(null);
 		
 		dadosPanel = new JPanel();
-		dadosPanel.setBounds(10, 21, 695, 224);
+		dadosPanel.setBounds(81, 34, 695, 211);
 		cadastroPanel.add(dadosPanel);
 		dadosPanel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "Dados do Bovino", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		dadosPanel.setLayout(null);
@@ -202,7 +204,6 @@ public class CadastroBonvino extends JFrame {
 			EntradaESaida.exibirMensagemDeErro(Constantes.MENSAGEM_ERRO_DATA, Constantes.TITULO_ERRO);
 		}
 		
-		//dataNascTextField = new JTextField();
 		dataNascTextField.setBounds(365, 109, 86, 20);
 		dadosPanel.add(dataNascTextField);
 		dataNascTextField.setColumns(10);
@@ -213,10 +214,10 @@ public class CadastroBonvino extends JFrame {
 			public void itemStateChanged(ItemEvent e) {
 				
 				if(sexoComboBox.getSelectedItem() == "F") {
-					mudaAtributo(true);
+					mudaVisibilidade(true);
 				}
 				else
-					mudaAtributo(false);
+					mudaVisibilidade(false);
 				
 			}
 		});
@@ -227,7 +228,7 @@ public class CadastroBonvino extends JFrame {
 		
 		femeaPanel = new JPanel();
 		femeaPanel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "Dados bovino f\u00EAmea", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		femeaPanel.setBounds(10, 256, 376, 144);
+		femeaPanel.setBounds(81, 256, 376, 144);
 		cadastroPanel.add(femeaPanel);
 		femeaPanel.setLayout(null);
 		
@@ -246,11 +247,16 @@ public class CadastroBonvino extends JFrame {
 		dataUltPartoLabel.setBounds(85, 100, 121, 14);
 		femeaPanel.add(dataUltPartoLabel);
 		
-		//dataPrechesTextField = new JTextField();
 		dataPrechesTextField.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
-				calculaProximoParto(dataPrechesTextField.getText());
+				String proxParto = Util.calculaProximoParto(dataPrechesTextField.getText());
+				if(proxParto==null) {
+					EntradaESaida.exibirMensagemDeErro(Constantes.MENSAGEM_ERRO_DATA, Constantes.TITULO_ERRO);
+					dataPrechesTextField.setText("");
+				}
+				else
+					dataProxPartoTextField.setText(proxParto);
 			}
 		});
 		
@@ -259,21 +265,20 @@ public class CadastroBonvino extends JFrame {
 		dataPrechesTextField.setEditable(false);
 		femeaPanel.add(dataPrechesTextField);
 		
-		//dataProxPartoTextField = new JTextField();
 		dataProxPartoTextField.setColumns(10);
 		dataProxPartoTextField.setBounds(216, 58, 86, 20);
 		dataProxPartoTextField.setEditable(false);
 		femeaPanel.add(dataProxPartoTextField);
 		
-		//dataUltPartoTextField = new JTextField();
 		dataUltPartoTextField.setColumns(10);
 		dataUltPartoTextField.setBounds(216, 97, 86, 20);
 		dataUltPartoTextField.setEditable(false);
 		femeaPanel.add(dataUltPartoTextField);
 		
 		cadastrarButton = new JButton("Cadastrar");
-		cadastrarButton.setBounds(455, 293, 191, 63);
+		cadastrarButton.setBounds(585, 294, 191, 63);
 		cadastroPanel.add(cadastrarButton);
+		
 		cadastrarButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
@@ -293,22 +298,33 @@ public class CadastroBonvino extends JFrame {
 					   sexo = sexoComboBox.getSelectedItem().toString()
 					   ;
 				
-				Bovino bovino = new Bovino();
-				
-							
-				bovino.setNome(nome);
-				bovino.setBrinco(brinco);
-				bovino.setBrincoMae(brincoMae);
-				bovino.setBrincoPai(brincoPai);
 				
 				
 				try {
+
+					Bovino bovino = new Bovino();
+
+					bovino.setNome(nome);
+					bovino.setBrinco(brinco);
+					bovino.setBrincoMae(brincoMae);
+					bovino.setBrincoPai(brincoPai);
+					
+					if(!Util.dataValida(dataNascimento)) {
+						throw new BovinoInvalidoException(Constantes.MENSAGEM_ERRO_DATA);
+					}
+					
 					data.setTime(formato.parse(dataNascimento));
 					bovino.setDataNascimento(data);
 					
 					if(sexo=="F") {
+						
 						dataPrenches = dataPrechesTextField.getText();
 						dataUltParto = dataUltPartoTextField.getText();
+
+						if(!Util.dataValida(dataPrenches) || !Util.dataValida(dataUltParto)) {
+							throw new BovinoInvalidoException(Constantes.MENSAGEM_ERRO_DATA);
+						}
+						
 						
 						data_1.setTime(formato.parse(dataPrenches));
 						bovino.setDataPrenches(data_1);
@@ -316,34 +332,42 @@ public class CadastroBonvino extends JFrame {
 						bovino.setDataUltParto(data_2);
 						
 					}
-
-				} catch (ParseException e1) {
+					
+					bovino.setSituacao(situacao);
+					bovino.setSexo(sexo);
+					bovino.setRaca(raca);
+					
+					String mensagem = Util.validaBovino(bovino);
+					
+					if( mensagem.equalsIgnoreCase(Constantes.MENSAGEM_SUCESSO))
+					{		
+						DAO<Bovino> dao = new DAO<Bovino>(Bovino.class);
+						dao.adiciona(bovino);
+						
+						EntradaESaida.exibirMensagemDeErro(mensagem, Constantes.TITULO_SUCESSO);
+					}
+					else
+					{
+						throw new BovinoInvalidoException(mensagem);
+					}
+				
+					
+				} catch (BovinoInvalidoException e1) {
+				
+					EntradaESaida.exibirMensagemDeErro(e1.getMessage(), Constantes.TITULO_ERRO);
+				
+				}catch (ParseException e2) {
+					
 					EntradaESaida.exibirMensagemDeErro(Constantes.MENSAGEM_ERRO_DATA, Constantes.TITULO_ERRO);
-				}
 				
-				
-				bovino.setSituacao(situacao);
-				bovino.setSexo(sexo);
-				bovino.setRaca(raca);
-				
-				String mensagem = validaBovino(bovino);
-				
-				if( mensagem.equalsIgnoreCase(Constantes.MENSAGEM_SUCESSO))
-				{					
-					BovinoBean bBean = new BovinoBean();
+				}catch (PSQLException e3) {
 					
-					bBean.setBovino(bovino);
-					
-					bBean.gravar();
-					
-					limparCampos();	
-				}
-				else
-				{
-					EntradaESaida.exibirMensagemDeErro(mensagem, Constantes.TITULO_ERRO);
+					EntradaESaida.exibirMensagemDeErro(Constantes.MENSAGEM_ERRO_PERSISTENCIA, Constantes.TITULO_ERRO);
+				}finally {
+				
 					limparCampos();
+				
 				}
-			
 			}
 		});
 		
@@ -353,7 +377,7 @@ public class CadastroBonvino extends JFrame {
 		
 		cansultaPanel = new JPanel();
 		cansultaPanel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "Consuluta Bovino", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		cansultaPanel.setBounds(10, 11, 695, 327);
+		cansultaPanel.setBounds(10, 11, 831, 327);
 		panel_2.add(cansultaPanel);
 		
 		modelo = new BovinoTableModel();
@@ -390,12 +414,12 @@ public class CadastroBonvino extends JFrame {
 				modelo.addListaDeBovinos(bovinos);
 			}
 		});
-		cansultaButton.setBounds(297, 353, 134, 47);
+		cansultaButton.setBounds(365, 349, 134, 47);
 		panel_2.add(cansultaButton);
 		
 	}
 	
-	private void mudaAtributo(boolean valor) {
+	private void mudaVisibilidade(boolean valor) {
 		dataPrechesTextField.setEditable(valor);
 		dataUltPartoTextField.setEditable(valor);
 	}
@@ -416,83 +440,5 @@ public class CadastroBonvino extends JFrame {
 		
 	}
 	
-	private String validaBovino(Bovino bovino) {
-		
-		Bovino bovinoParente;
-		
-		if(bovino.getNome().isEmpty() || bovino.getNome().length() > Constantes.TAM_NOME)
-			return Constantes.MENSAGEM_ERRO_NOME;
-		
-		if(bovino.getBrinco().isEmpty()  || bovino.getBrinco().length() > Constantes.TAM_BRINCO)
-			return Constantes.MENSAGEM_ERRO_BRINCO;
-		
-		if(bovino.getBrincoPai().length() > Constantes.TAM_BRINCO)
-			return Constantes.MENSAGEM_ERRO_BRINCO_PAI;
-		
-		if(bovino.getBrincoMae().length() > Constantes.TAM_BRINCO)
-			return Constantes.MENSAGEM_ERRO_BRINCO_MAE;
-		
-		
-		if(!bovino.getBrincoPai().isEmpty()) {
-			bovinoParente = pesquisaParente(bovino.getBrincoPai());
-			
-			if(bovinoParente!=null) {
-				if(bovinoParente.getSexo().equalsIgnoreCase("M")==false)
-					return Constantes.PAI_INVALIDO;
-				
-			}
-			else
-				return Constantes.PAI_INVALIDO;
-		}
-		
-		
-		if(!bovino.getBrincoMae().isEmpty()) {
-			bovinoParente = pesquisaParente(bovino.getBrincoMae());
-			
-			if(bovinoParente!=null) {
-				if(bovinoParente.getSexo().equalsIgnoreCase("F")==false)
-					return Constantes.MAE_INVALIDA;
-			}
-			else
-				return Constantes.MAE_INVALIDA;
-		}
-		
-		return Constantes.MENSAGEM_SUCESSO;
-		
-	}
 	
-	private void calculaProximoParto(String data) {
-		
-		
-		try {
-			
-			Calendar calendar = Calendar.getInstance();
-			int dia, mes, ano;
-			
-			System.out.println(data);
-			calendar.setTime(formato.parse(data));
-			
-			calendar.add(Calendar.DAY_OF_MONTH, Constantes.GESTACAO);
-			
-			dia = calendar.get(Calendar.DAY_OF_MONTH);
-			mes = calendar.get(Calendar.MONTH)+1;
-			ano = calendar.get(Calendar.YEAR);
-			
-			dataProxPartoTextField.setText(String.format((dia>10?"%d":"0%d")+(mes>10?"//%d":"//0%d")+ "//%d", dia, mes, ano));
-			
-		} catch (ParseException e1) {
-			EntradaESaida.exibirMensagemDeErro(Constantes.MENSAGEM_ERRO_DATA, Constantes.TITULO_ERRO);
-		}
-		
-		
-	}
-	
-	private Bovino pesquisaParente(String brinco) {
-		
-		DAO<Bovino> dao = new DAO<Bovino>(Bovino.class);
-		
-		Bovino bovino = dao.buscaPorld(brinco);
-		
-		return bovino;
-	}
 }

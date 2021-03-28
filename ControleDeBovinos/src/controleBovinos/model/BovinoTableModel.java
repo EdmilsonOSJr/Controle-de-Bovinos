@@ -1,4 +1,4 @@
-package controleDeBovinos.model;
+package controleBovinos.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -6,24 +6,32 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import controleBovinos.util.Util;
+
 @SuppressWarnings("serial")
 public class BovinoTableModel extends AbstractTableModel {
 	// modelo da minha tabela
 	// lista com os insumos que serão mostrados na minha tabela
-	private List<Bovino> bovinos;
+	private List<List<String>> bovinos;
 
 	// Nome das colunas da minha tabela
 	private String[] colunas = new String[] { "Nome", "Brinco", "Brinco Pai", "Brinco Mãe", "Situação", "Sexo", "Raça",
-			"Data nasc", "Data prenches", "Data último parto" };
-
+			"Nascimento", "Prenches", "Último parto" };
 
 	// cria uma nova instancia da tabelamodelInsumo
 	public BovinoTableModel(List<Bovino> bovinos) {
-		this.bovinos = bovinos;
+		super();
+		
+		for (int cont = 0; cont < bovinos.size(); cont++) {
+			
+			this.bovinos.add(Util.populaListaBovinos(bovinos.get(cont)));
+			
+		}
+	
 	}
 
 	public BovinoTableModel() {
-		this.bovinos = new ArrayList<Bovino>();
+		this.bovinos = new ArrayList<>();
 	}
 
 	// retorna o número de linhas da tabela
@@ -73,62 +81,56 @@ public class BovinoTableModel extends AbstractTableModel {
 
 	}
 
-//	// coloca um valor numa linha informada
-//	public void setValueAt(Bovino aValue, int rowIndex) {
-//		Bovino bovino = bovinos.get(rowIndex);
-//		
-//		bovino[0] = aValue.getNome();
-//		bovino[1] = aValue.getBrinco();
-//		bovino[2] = aValue.getBrincoPai();
-//		bovino[3] = aValue.getBrincoMae();
-//		bovino[4] = aValue.getSituacao();
-//		bovino[5] = aValue.getSexo();
-//		bovino[6] = aValue.getRaca();
-//		bovino[7] = transformaString(aValue.getDataNascimento());
-//		bovino[8] = transformaString(aValue.getDataPrenches());
-//		bovino[9] = transformaString(aValue.getDataUltParto());
-//
-//		// avisa ao listener que uma alteração foi feita
-//		fireTableCellUpdated(rowIndex, 0);
-//		fireTableCellUpdated(rowIndex, 1);
-//		fireTableCellUpdated(rowIndex, 2);
-//		fireTableCellUpdated(rowIndex, 3);
-//		fireTableCellUpdated(rowIndex, 4);
-//		fireTableCellUpdated(rowIndex, 5);
-//		fireTableCellUpdated(rowIndex, 6);
-//		fireTableCellUpdated(rowIndex, 7);
-//		fireTableCellUpdated(rowIndex, 8);
-//		fireTableCellUpdated(rowIndex, 9);
-//	}
+	// coloca um valor numa linha informada
+	public void setValueAt(Bovino aValue, int rowIndex) {
+		List<String> bovino = bovinos.get(rowIndex);
+		
+		Util.populaListaBovinos(aValue, bovino);
+		
+		// avisa ao listener que uma alteração foi feita
+		fireTableCellUpdated(rowIndex, 0);
+		fireTableCellUpdated(rowIndex, 1);
+		fireTableCellUpdated(rowIndex, 2);
+		fireTableCellUpdated(rowIndex, 3);
+		fireTableCellUpdated(rowIndex, 4);
+		fireTableCellUpdated(rowIndex, 5);
+		fireTableCellUpdated(rowIndex, 6);
+		fireTableCellUpdated(rowIndex, 7);
+		fireTableCellUpdated(rowIndex, 8);
+		fireTableCellUpdated(rowIndex, 9);
+	}
 
 	// coloca um valor numa linha informada
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		Bovino bovino = bovinos.get(rowIndex);
+		List<String> bovino = bovinos.get(rowIndex);
 
 		switch (columnIndex) {
 		case 0:
-			bovino.setNome(aValue.toString());
+			bovino.add(aValue.toString());
 		case 1:
-			bovino.setBrinco(aValue.toString());
+			bovino.add(aValue.toString());
 		case 2:
-			bovino.setBrincoPai(aValue.toString());
+			bovino.add(aValue.toString());
 		case 3:
-			bovino.setBrincoMae(aValue.toString());
+			bovino.add(aValue.toString());
 		case 4:
-			bovino.setSituacao(aValue.toString());
+			bovino.add(aValue.toString());
 		case 5:
-			bovino.setSexo(aValue.toString());
+			bovino.add(aValue.toString());
 		case 6:
-			bovino.setRaca(aValue.toString());
+			bovino.add(aValue.toString());
 		case 7:
 			Calendar data = (Calendar) aValue;
-			bovino.setDataNascimento(data);
+			bovino.add(data == null ? "Não informado"
+					: Util.dataParaString(data));
 		case 8:
-			Calendar data_1 = (Calendar) aValue;
-			bovino.setDataPrenches(data_1);
+			Calendar data1 = (Calendar) aValue;
+			bovino.add(data1 == null ? "Não informado"
+					: Util.dataParaString(data1));
 		case 9:
-			Calendar data_2 = (Calendar) aValue;
-			bovino.setDataUltParto(data_2);
+			Calendar data2 = (Calendar) aValue;
+			bovino.add(data2 == null ? "Não informado"
+					: Util.dataParaString(data2));
 
 		default:
 			System.err.println("Índice da coluna inválido");
@@ -141,29 +143,29 @@ public class BovinoTableModel extends AbstractTableModel {
 	// recupera um linhha
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Bovino bovinoSelecionado = bovinos.get(rowIndex);
+		List<String> bovinoSelecionado = bovinos.get(rowIndex);
 
 		switch (columnIndex) {
 		case 0:
-			return bovinoSelecionado.getNome();
+			return bovinoSelecionado.get(0);
 		case 1:
-			return bovinoSelecionado.getBrinco();
+			return bovinoSelecionado.get(1);
 		case 2:
-			return bovinoSelecionado.getBrincoPai();
+			return bovinoSelecionado.get(2);
 		case 3:
-			return bovinoSelecionado.getBrincoMae();
+			return bovinoSelecionado.get(3);
 		case 4:
-			return bovinoSelecionado.getSituacao();
+			return bovinoSelecionado.get(4);
 		case 5:
-			return bovinoSelecionado.getSexo();
+			return bovinoSelecionado.get(5);
 		case 6:
-			return bovinoSelecionado.getRaca();
+			return bovinoSelecionado.get(6);
 		case 7:
-			return bovinoSelecionado.getDataNascimento();
+			return bovinoSelecionado.get(7);
 		case 8:
-			return bovinoSelecionado.getDataPrenches();
+			return bovinoSelecionado.get(8);
 		case 9:
-			return bovinoSelecionado.getDataUltParto();
+			return bovinoSelecionado.get(9);
 		default:
 			System.err.println("Índice da coluna inválido");
 			break;
@@ -176,13 +178,13 @@ public class BovinoTableModel extends AbstractTableModel {
 	}
 
 	// retorna o insumo selecionado
-	public Bovino getBovino(int rowindex) {
+	public List<String> getBovino(int rowindex) {
 		return bovinos.get(rowindex);
 	}
 
 	// insere um insumo na tabela
 	public void addBovino(Bovino bovino) {
-		bovinos.add(bovino);
+		bovinos.add(Util.populaListaBovinos(bovino));
 
 		int ultimoIndice = getRowCount() - 1;
 
@@ -199,12 +201,17 @@ public class BovinoTableModel extends AbstractTableModel {
 	// adiciona uma lista de insumos
 	public void addListaDeBovinos(List<Bovino> novosBovinos) {
 		int tamanhoAntigo = getRowCount();
-		bovinos.addAll(novosBovinos);
+		
+		for (int cont = 0; cont < novosBovinos.size(); cont++) {
+			
+			bovinos.add(Util.populaListaBovinos(novosBovinos.get(cont)));
+		}
+		
 		fireTableRowsInserted(tamanhoAntigo, getRowCount() - 1);
 	}
 
 	// retorna a tabela inteira.
-	public List<Bovino> getListaDeBovinos() {
+	public List<List<String>> getListaDeBovinos() {
 		return bovinos;
 	}
 
@@ -216,4 +223,5 @@ public class BovinoTableModel extends AbstractTableModel {
 	public boolean isEmpty() {
 		return bovinos.isEmpty();
 	}
+
 }

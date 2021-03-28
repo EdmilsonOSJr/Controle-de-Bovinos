@@ -1,8 +1,6 @@
 package controleBovinos.teste;
 
-import controleBovinos.Bean.BovinoBean;
-import controleBovinos.DAO.DAO;
-import controleDeBovinos.model.Bovino;
+import controleBovinos.model.Bovino;
 
 public class Teste {
 
@@ -15,15 +13,7 @@ public class Teste {
 		bovino.setBrincoPai("brinco 1 pai");
 		bovino.setNome("gado");
 		
-		BovinoBean bBean = new BovinoBean();
 		
-		bBean.setBovino(bovino);
-		
-		bBean.gravar();
-		
-		//DAO<Bovino> dao = new DAO<>(Bovino.class);
-		
-		//dao.adiciona(bovino);
 	}
 	
 	

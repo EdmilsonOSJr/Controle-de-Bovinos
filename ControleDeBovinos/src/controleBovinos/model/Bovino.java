@@ -1,22 +1,38 @@
-package controleDeBovinos.model;
+package controleBovinos.model;
 
 import java.util.Calendar;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import controleBovinos.contantes.Constantes;
+
 @Entity
 public class Bovino {
 
 	@Id
+	@Column(length = Constantes.TAM_BRINCO)
 	private String brinco;
+	
+	@Column(length = Constantes.TAM_NOME, nullable = false)
 	private String nome;
+	
+	@Column(length = Constantes.TAM_SITUACAO)
 	private String situacao;
+	
+	@Column(length = Constantes.TAM_SEXO)
 	private String sexo;
+	
+	@Column(length = Constantes.TAM_BRINCO)
 	private String brincoMae;
+	
+	@Column(length = Constantes.TAM_BRINCO)
 	private String brincoPai;
+	
+	@Column(length = Constantes.TAM_RACA)
 	private String raca;
 	
 	@Temporal(TemporalType.DATE)
