@@ -327,7 +327,7 @@ public class CadastroBonvino extends JFrame {
 						
 						
 						data_1.setTime(formato.parse(dataPrenches));
-						bovino.setDataPrenches(data_1);
+						bovino.setDataPrenhes(data_1);
 						data_2.setTime(formato.parse(dataUltParto));
 						bovino.setDataUltParto(data_2);
 						
@@ -344,7 +344,7 @@ public class CadastroBonvino extends JFrame {
 						DAO<Bovino> dao = new DAO<Bovino>(Bovino.class);
 						dao.adiciona(bovino);
 						
-						EntradaESaida.exibirMensagemDeErro(mensagem, Constantes.TITULO_SUCESSO);
+						EntradaESaida.exibirMensagem(mensagem, Constantes.TITULO_SUCESSO);
 					}
 					else
 					{

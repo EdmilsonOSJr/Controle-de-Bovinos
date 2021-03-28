@@ -180,7 +180,7 @@ public class Util {
 		novo.add(bovino.getRaca());
 
 		novo.add(bovino.getDataNascimento() == null ? Constantes.DADO_NAO_INFORMADO : Util.dataParaString(bovino.getDataNascimento()));
-		novo.add(bovino.getDataPrenches() == null ? Constantes.DADO_NAO_INFORMADO : Util.dataParaString(bovino.getDataPrenches()));
+		novo.add(bovino.getDataPrenhes() == null ? Constantes.DADO_NAO_INFORMADO : Util.dataParaString(bovino.getDataPrenhes()));
 		novo.add(bovino.getDataUltParto() == null ? Constantes.DADO_NAO_INFORMADO : Util.dataParaString(bovino.getDataUltParto()));
 
 		return novo;

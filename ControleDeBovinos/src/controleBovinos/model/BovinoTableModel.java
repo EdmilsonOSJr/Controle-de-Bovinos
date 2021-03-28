@@ -16,7 +16,7 @@ public class BovinoTableModel extends AbstractTableModel {
 
 	// Nome das colunas da minha tabela
 	private String[] colunas = new String[] { "Nome", "Brinco", "Brinco Pai", "Brinco Mãe", "Situação", "Sexo", "Raça",
-			"Nascimento", "Prenches", "Último parto" };
+			"Nascimento", "Prenhes", "Último parto" };
 
 	// cria uma nova instancia da tabelamodelInsumo
 	public BovinoTableModel(List<Bovino> bovinos) {

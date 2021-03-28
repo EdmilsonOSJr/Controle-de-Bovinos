@@ -39,17 +39,17 @@ public class Bovino {
 	private Calendar dataNascimento;
 	
 	@Temporal(TemporalType.DATE)
-	private Calendar dataPrenches;
+	private Calendar dataPrenhes;
 	
 	@Temporal(TemporalType.DATE)
 	private Calendar dataUltParto;
 
 	
-	public Calendar getDataPrenches() {
-		return dataPrenches;
+	public Calendar getDataPrenhes() {
+		return dataPrenhes;
 	}
-	public void setDataPrenches(Calendar dataPrenches) {
-		this.dataPrenches = dataPrenches;
+	public void setDataPrenhes(Calendar dataPrenches) {
+		this.dataPrenhes = dataPrenches;
 	}
 	public Calendar getDataUltParto() {
 		return dataUltParto;
