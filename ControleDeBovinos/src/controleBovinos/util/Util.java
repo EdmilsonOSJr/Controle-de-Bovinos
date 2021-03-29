@@ -14,9 +14,6 @@ import controleBovinos.DAO.DAO;
 import controleBovinos.contantes.Constantes;
 import controleBovinos.model.Bovino;
 
-/*
- * Classe com funções  
- */
 public class Util {
 
 	/**
