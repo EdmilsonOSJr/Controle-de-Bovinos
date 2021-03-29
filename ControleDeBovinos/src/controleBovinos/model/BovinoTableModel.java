@@ -8,17 +8,18 @@ import javax.swing.table.AbstractTableModel;
 
 import controleBovinos.util.Util;
 
+/*
+ * Classe usado para preencher a tabela de consulta.
+ */
 @SuppressWarnings("serial")
 public class BovinoTableModel extends AbstractTableModel {
-	// modelo da minha tabela
-	// lista com os insumos que serão mostrados na minha tabela
+
 	private List<List<String>> bovinos;
 
-	// Nome das colunas da minha tabela
 	private String[] colunas = new String[] { "Nome", "Brinco", "Brinco Pai", "Brinco Mãe", "Situação", "Sexo", "Raça",
 			"Nascimento", "Prenhes", "Último parto" };
 
-	// cria uma nova instancia da tabelamodelInsumo
+	
 	public BovinoTableModel(List<Bovino> bovinos) {
 		super();
 		
@@ -177,7 +178,7 @@ public class BovinoTableModel extends AbstractTableModel {
 		return false;
 	}
 
-	// retorna o insumo selecionado
+	// retorna o bovino selecionado
 	public List<String> getBovino(int rowindex) {
 		return bovinos.get(rowindex);
 	}
@@ -191,14 +192,14 @@ public class BovinoTableModel extends AbstractTableModel {
 		fireTableRowsInserted(ultimoIndice, ultimoIndice);
 	}
 
-	// insere um insumo na tabela
+	// remove um bovino na tabela
 	public void removeBovino(int rowindex) {
 		bovinos.remove(rowindex);
 
 		fireTableRowsInserted(rowindex, rowindex);
 	}
 
-	// adiciona uma lista de insumos
+	// adiciona uma lista de bovinos
 	public void addListaDeBovinos(List<Bovino> novosBovinos) {
 		int tamanhoAntigo = getRowCount();
 		

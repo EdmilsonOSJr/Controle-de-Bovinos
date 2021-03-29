@@ -14,8 +14,17 @@ import controleBovinos.DAO.DAO;
 import controleBovinos.contantes.Constantes;
 import controleBovinos.model.Bovino;
 
+/*
+ * Classe com funções  
+ */
 public class Util {
 
+	/**
+	 * Função que recebe um bovino e verifica se os seus dados estão corretos.
+	 * 
+	 * @param bovino é o bovino que será avaliado.
+	 * @return String com a mensagem de erro caso encontre algum ou de sucesso caso contrário.
+	 */
 	public static String validaBovino(Bovino bovino) {
 
 		if (!validaNome(bovino.getNome()))
@@ -34,6 +43,16 @@ public class Util {
 
 	}
 
+	/**
+	 * Método que recebe o nome de um bovino e verifica se ele é válido. 
+	 * O dado é inválido quando:
+	 * 		caso ele seja nulo .
+	 * 		caso tenha um tamanho maior que 20.
+	 * 
+	 * @param nome é o nome que será avaliado.
+	 * 
+	 * @return boolean que pode ser true caso o nome serja válido ou false caso contrário.
+	 */
 	public static boolean validaNome(String nome) {
 
 		if (nome.isEmpty() || nome.length() > Constantes.TAM_NOME) {
@@ -42,6 +61,17 @@ public class Util {
 		return true;
 	}
 
+	/**
+	 * Método que recebe o brinco de um bovino e verifica se ele é válido. 
+	 * O dado é inválido quando:
+	 * 		caso ele seja nulo.
+	 * 		caso tenha um tamanho maior que 8 
+	 * 		caso já exista.
+	 * 
+	 * @param brinco é o brinco do bovino que será avaliado.
+	 * 
+	 * @return boolean que pode ser true caso o brinco serja válido ou false caso contrário.
+	 */
 	public static boolean validaBrinco(String brinco) {
 		Bovino bovino;
 
@@ -60,6 +90,18 @@ public class Util {
 		return true;
 	}
 
+	
+	/**
+	 * Método que recebe o brinco do pai de um bovino e verifica se ele é válido. 
+	 * O dado é inválido quando:
+	 * 		caso ele tenha um tamanho maior que 8.
+	 * 		caso ele não exista no banco de dados.
+	 * 		caso ele exista no banco de dados mas o sexo não seja compatível com o masculino.
+	 * 
+	 * @param brincoPai é o brinco do bovino que será avaliado.
+	 * 
+	 * @return boolean que pode ser true caso o brinco serja válido ou false caso contrário.
+	 */
 	public static boolean validaBrincoPai(String brincoPai) {
 
 		Bovino bovino;
@@ -86,6 +128,19 @@ public class Util {
 		return true;
 	}
 
+	
+	
+	/**
+	 * Método que recebe o brinco da mãe de um bovino e verifica se ele é válido. 
+	 * O dado é inválido quando:
+	 * 		caso ele tenha um tamanho maior que 8.
+	 * 		caso ele não exista no banco de dados.
+	 * 		caso ele exista no banco de dados mas o sexo não seja compatível com o feminino.
+	 * 
+	 * @param brincoMãe é o brinco do bovino que será avaliado.
+	 * 
+	 * @return boolean que pode ser true caso o brinco serja válido ou false caso contrário.
+	 */
 	public static boolean validaBrincoMae(String brincoMae) {
 
 		Bovino bovino;
@@ -109,6 +164,13 @@ public class Util {
 		return true;
 	}
 
+	/**
+	 * Método usado para calcular a data do próximo parto de um bovino. 
+	 * 
+	 * @param data é a data de prenhes à qual serão adicionados 9 meses.
+	 * 
+	 * @return String que pode ser null caso a data fornecida seja inválida ou uma String com a nova data caso contrário.
+	 */
 	public static String calculaProximoParto(String data) {
 		SimpleDateFormat formato = new SimpleDateFormat(Constantes.FORMATO_DATA);
 		try {
@@ -118,7 +180,6 @@ public class Util {
 
 			Calendar calendar = Calendar.getInstance();
 
-			System.out.println(data);
 			calendar.setTime(formato.parse(data));
 
 			calendar.add(Calendar.DAY_OF_MONTH, Constantes.GESTACAO);
@@ -130,7 +191,13 @@ public class Util {
 		}
 
 	}
-
+	
+	/***
+	 * Método que pesquisa um bovino no banco de dados.
+	 * 
+	 * @param brinco é o brinco do bovino que será procurado no banco de dados.
+	 * @return Bovino, é um bovino e caso não exista retorna null.
+	 */
 	public static Bovino pesquisaParente(String brinco) {
 
 		DAO<Bovino> dao = new DAO<Bovino>(Bovino.class);
@@ -139,21 +206,35 @@ public class Util {
 
 		return bovino;
 	}
-
-	public static boolean dataValida(String strDate) {
+	
+	
+	/***
+	 * Método que recebe uma data e verifica se ela é válida.
+	 * 
+	 * @param data é a data que será verificada.
+	 * @return boolean que pode ser true caso seja uma data válida e false caso contrário.
+	 */
+	public static boolean dataValida(String data) {
 		String dateFormat = "dd/MM/uuuu";
 
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormat)
 				.withResolverStyle(ResolverStyle.STRICT);
 
 		try {
-			LocalDate.parse(strDate, dateTimeFormatter);
+			LocalDate.parse(data, dateTimeFormatter);
 			return true;
 		} catch (DateTimeParseException e) {
 			return false;
 		}
 	}
 
+	
+	/***
+	 * Método que recebe um Calendar e passa retorna uma String que representa a data no formato dia/mês/ano.
+	 * 
+	 * @param calendar é a data que será convertida.
+	 * @return String que é a data convertida.
+	 */
 	public static String dataParaString(Calendar calendar) {
 
 		int dia, mes, ano;
@@ -166,7 +247,12 @@ public class Util {
 
 	}
 
-
+	/***
+	 * Método usado para receber um bovino e criar uma lista de Strings com os dados dele.
+	 * 
+	 * @param bovino o bovino que será usado para construir a lista.
+	 * @return List\<String\> que é composta pelos dados do bovino. 
+	 */
 	public static List<String> populaListaBovinos(Bovino bovino) {
 
 		List<String> novo = new ArrayList<>();
@@ -186,6 +272,12 @@ public class Util {
 		return novo;
 	}
 	
+	/***
+	 * Método sobrecarregado usado para receber um bovino e popular uma lista de Strings com os dados dele.
+	 * 
+	 * @param bovino o bovino que será usado para construir a lista.
+	 * @param novo a lista que será populada com os dados do bovino.
+	 */
 	public static void populaListaBovinos(Bovino bovino, List<String> novo) {
 
 		novo.addAll(populaListaBovinos(bovino));

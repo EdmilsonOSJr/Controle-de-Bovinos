@@ -42,7 +42,8 @@ import controleBovinos.model.Bovino;
 import controleBovinos.model.BovinoTableModel;
 import controleBovinos.util.Util;
 
-public class CadastroBonvino extends JFrame {
+// Classe da interface com o usuário.
+public class InterfaceControle extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -78,13 +79,13 @@ public class CadastroBonvino extends JFrame {
 	SimpleDateFormat formato = new SimpleDateFormat(Constantes.FORMATO_DATA); 
 	
 	/**
-	 * Launch the application.
+	 * Inicia a aplicação.
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CadastroBonvino frame = new CadastroBonvino();
+					InterfaceControle frame = new InterfaceControle();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -94,9 +95,9 @@ public class CadastroBonvino extends JFrame {
 	}
 
 	/**
-	 * Create the frame.
+	 * Cria um frame.
 	 */
-	public CadastroBonvino() {
+	public InterfaceControle() {
 		
 		setTitle("Controle de Bovinos");
 		setResizable(false);
@@ -195,6 +196,7 @@ public class CadastroBonvino extends JFrame {
 		dataNascLabel.setBounds(261, 112, 94, 14);
 		dadosPanel.add(dataNascLabel);
 		
+		// Cria áreas de texto com uma máscara compatível com o formato de data: dia/mês/ano.
 		try {
 			dataNascTextField = new JFormattedTextField(new MaskFormatter(Constantes.MASCARA_DATA));
 			dataPrechesTextField = new JFormattedTextField(new MaskFormatter(Constantes.MASCARA_DATA));
@@ -210,14 +212,15 @@ public class CadastroBonvino extends JFrame {
 		
 		sexoComboBox = new JComboBox<String>();
 		
+		// É criado um evento caso o valor do sexo seja F, onde as datas relativas a fêmeas.
 		sexoComboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				
 				if(sexoComboBox.getSelectedItem() == "F") {
-					mudaVisibilidade(true);
+					mudaAtributoEditavel(true);
 				}
 				else
-					mudaVisibilidade(false);
+					mudaAtributoEditavel(false);
 				
 			}
 		});
@@ -247,6 +250,7 @@ public class CadastroBonvino extends JFrame {
 		dataUltPartoLabel.setBounds(85, 100, 121, 14);
 		femeaPanel.add(dataUltPartoLabel);
 		
+		// É criado um evento para calcular a data do próximo parto usando a data de prenhes.
 		dataPrechesTextField.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -279,6 +283,7 @@ public class CadastroBonvino extends JFrame {
 		cadastrarButton.setBounds(585, 294, 191, 63);
 		cadastroPanel.add(cadastrarButton);
 		
+		// É criado um evento ao clicar no botão de cadastrar e assim cadastrar um bovinno ao banco de daddos.
 		cadastrarButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
@@ -316,6 +321,7 @@ public class CadastroBonvino extends JFrame {
 					data.setTime(formato.parse(dataNascimento));
 					bovino.setDataNascimento(data);
 					
+					// Apenas essas datas caso o bovino seja do sexo feminino.
 					if(sexo=="F") {
 						
 						dataPrenches = dataPrechesTextField.getText();
@@ -404,6 +410,8 @@ public class CadastroBonvino extends JFrame {
 		cansultaPanel.setLayout(gl_cansultaPanel);
 		
 		cansultaButton = new JButton("Consultar");
+		
+		// É criado um evento ao clicar no botão consultar para recuperar os bovinos do banco de dados.
 		cansultaButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -419,11 +427,18 @@ public class CadastroBonvino extends JFrame {
 		
 	}
 	
-	private void mudaVisibilidade(boolean valor) {
+	
+	/***
+	 * Método usado para mudar o atributo de edição das datas relativas às fêmeas.
+	 * 
+	 * @param valor é um boolean que representa a visibilidade do campo, false para não editável e true para editável.
+	 */
+	private void mudaAtributoEditavel(boolean valor) {
 		dataPrechesTextField.setEditable(valor);
 		dataUltPartoTextField.setEditable(valor);
 	}
 	
+	//Método usado para limpar todos os campos da interface.
 	private void limparCampos() {
 		nomeTextField.setText("");
 		brincoTextField.setText("");
